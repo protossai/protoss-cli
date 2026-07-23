@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Verify, package, and draft release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          # Release binaries use one reviewed, supported toolchain. The go.mod
+          # directive remains the source-compatibility floor tested by CI.
+          go-version: 1.26.5
+          cache-dependency-path: go.sum
+
+      - name: Check formatting
+        run: |
+          go fmt ./...
+          git diff --exit-code
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Run bundled conformance suite
+        run: go run ./cmd/protoss spec test-conformance --quiet
+
+      - name: Verify tag and immutable specification provenance
+        run: go run ./tools/check-release --tag "${GITHUB_REF_NAME}"
+
+      - name: Smoke-test release version injection
+        shell: bash
+        run: |
+          release_version="${GITHUB_REF_NAME#v}"
+          smoke_binary="${RUNNER_TEMP}/protoss-release-smoke"
+          go build -trimpath \
+            -ldflags="-s -w -X github.com/protossai/protoss-cli/internal/result.CLIVersion=${release_version}" \
+            -o "${smoke_binary}" ./cmd/protoss
+          test "$("${smoke_binary}" --version)" = "protoss ${release_version}"
+
+      - name: Create draft release
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+        with:
+          distribution: goreleaser
+          version: v2.17.0
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attest release archives
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-checksums: dist/checksums.txt

@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Protoss: Build CLI",
+      "type": "process",
+      "command": "go",
+      "args": ["build", "-trimpath", "-o", "${workspaceFolder}/bin/protoss", "./cmd/protoss"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "GO111MODULE": "on",
+          "CGO_ENABLED": "0"
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Protoss: Test CLI",
+      "type": "process",
+      "command": "go",
+      "args": ["test", "./..."],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "GO111MODULE": "on"
+        }
+      },
+      "group": "test",
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Protoss: Run JPS conformance",
+      "type": "process",
+      "command": "go",
+      "args": ["run", "./cmd/protoss", "spec", "test-conformance"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "GO111MODULE": "on"
+        }
+      },
+      "dependsOn": "Protoss: Test CLI",
+      "problemMatcher": ["$go"]
+    }
+  ]
+}
