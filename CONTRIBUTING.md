@@ -16,7 +16,8 @@ Changes should include focused tests for human and JSON output, exit status, inp
 adversarial behavior. Never add a runtime fetch of mutable specification branches.
 
 Material command or output changes should first describe compatibility, migration, automation,
-security, privacy, and authority consequences in an issue.
+security, privacy, and authority consequences in an issue. Release version increments and
+prereleases follow [VERSIONING.md](VERSIONING.md).
 
 ## Scope
 
