@@ -66,10 +66,11 @@ binary. A release build must report the tag version without the leading `v`.
    signed tag with an unsigned tag.
 
 4. The tag workflow repeats the tests, verifies immutable JPS provenance, and packages the binaries
-   without publishing them. It uploads the six archives and `checksums.txt` as one short-lived
-   workflow artifact. Native Linux, macOS, and Windows jobs verify and run archives from that exact
-   artifact. Only after all native smoke tests pass does the final job attest the archives and
-   create the draft GitHub release. No maintainer PAT or repository secret is used.
+   without publishing them. Included file timestamps are normalized to the tagged commit for
+   reproducible archives. The workflow uploads the six archives and `checksums.txt` as one
+   short-lived workflow artifact. Native Linux, macOS, and Windows jobs verify and run archives
+   from that exact artifact. Only after all native smoke tests pass does the final job attest the
+   archives and create the draft GitHub release. No maintainer PAT or repository secret is used.
    To diagnose or revalidate an existing tag without creating a release, manually dispatch the same
    workflow; manual runs stop after the native smoke tests:
 
