@@ -65,20 +65,20 @@ binary. A release build must report the tag version without the leading `v`.
    If no signing key is configured, stop and resolve the signing policy; do not silently replace a
    signed tag with an unsigned tag.
 
-4. The tag workflow repeats the tests, verifies immutable JPS provenance, packages the binaries,
-   creates `checksums.txt`, drafts the GitHub release, and attests every archive.
-5. Download the draft assets, verify their checksums and attestations, and smoke-test at least one
-   archive on each operating-system family. Before testing a draft, set the temporary
-   `RELEASE_SMOKE_TOKEN` repository secret to a token with read access to the draft release. Run the
-   macOS archive check on a GitHub-hosted runner, then delete the secret:
+4. The tag workflow repeats the tests, verifies immutable JPS provenance, and packages the binaries
+   without publishing them. It uploads the six archives and `checksums.txt` as one short-lived
+   workflow artifact. Native Linux, macOS, and Windows jobs verify and run archives from that exact
+   artifact. Only after all native smoke tests pass does the final job attest the archives and
+   create the draft GitHub release. No maintainer PAT or repository secret is used.
+   To diagnose or revalidate an existing tag without creating a release, manually dispatch the same
+   workflow; manual runs stop after the native smoke tests:
 
    ```bash
-   gh workflow run release-smoke.yml --field tag=<cli-tag>
-   gh run watch --exit-status
-   gh secret delete RELEASE_SMOKE_TOKEN
+   gh workflow run release.yml --field tag=<cli-tag>
    ```
 
-6. Review the generated notes and publish the draft. With Release Immutability enabled, publishing
+5. Review the successful workflow, generated notes, checksums, attestations, and draft assets.
+6. Publish the draft. With Release Immutability enabled, publishing
    locks the tag and assets.
 
 Do not move or reuse a released tag. Fixes require a new version.
