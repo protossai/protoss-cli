@@ -4,7 +4,7 @@ All notable changes to tagged releases are documented here.
 
 ## Unreleased
 
-- Add a manually triggered macOS release-archive smoke test.
+- Add a manually triggered macOS release-archive smoke test with draft-release authentication.
 
 ## 0.1.0 - 2026-07-22
 

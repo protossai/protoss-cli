@@ -20,7 +20,9 @@ jobs:
       - name: Download and smoke-test archive
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          # The default token cannot read draft releases. Maintainers provide this
+          # secret temporarily while validating a draft, then delete it.
+          GH_TOKEN: ${{ secrets.RELEASE_SMOKE_TOKEN || github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
           case "$(uname -m)" in
