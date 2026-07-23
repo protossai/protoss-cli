@@ -4,6 +4,8 @@ All notable changes to tagged releases are documented here.
 
 ## Unreleased
 
+- Add a manually triggered macOS release-archive smoke test.
+
 ## 0.1.0 - 2026-07-22
 
 - Add the initial offline `protoss spec` command namespace.

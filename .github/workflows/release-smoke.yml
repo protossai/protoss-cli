@@ -1,0 +1,44 @@
+name: Release smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Exact release tag to smoke-test
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: macOS release archive
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download and smoke-test archive
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          case "$(uname -m)" in
+            arm64) release_arch="arm64" ;;
+            x86_64) release_arch="amd64" ;;
+            *) echo "Unsupported runner architecture: $(uname -m)" >&2; exit 1 ;;
+          esac
+
+          release_version="${RELEASE_TAG#v}"
+          archive="protoss_${release_version}_darwin_${release_arch}.tar.gz"
+          destination="${RUNNER_TEMP}/protoss-release-smoke"
+
+          mkdir -p "${destination}"
+          gh release download "${RELEASE_TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --pattern "${archive}" \
+            --dir "${destination}"
+          tar -xzf "${destination}/${archive}" -C "${destination}"
+
+          test "$("${destination}/protoss" --version)" = "protoss ${release_version}"
+          "${destination}/protoss" spec test-conformance --quiet
