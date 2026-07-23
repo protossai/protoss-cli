@@ -5,9 +5,6 @@
 > Tagged binaries are official only when they appear on this repository's GitHub Releases page
 > with `checksums.txt`. Development checkouts may temporarily embed unreleased JPS snapshots, but
 > the release workflow rejects them.
->
-> No Protoss CLI version has been tagged or published yet. The installation section below documents
-> how future release assets will be verified and installed.
 
 `protoss` is an extensible developer command line. Its first public namespace, `protoss spec`,
 provides offline, nonnormative tooling for the Judgment Pack Specification (JPS).

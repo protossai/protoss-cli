@@ -4,6 +4,8 @@ All notable changes to tagged releases are documented here.
 
 ## Unreleased
 
+## 0.1.0 - 2026-07-22
+
 - Add the initial offline `protoss spec` command namespace.
 - Implement strict carrier, structural, semantic, and extension-capability validation.
 - Embed and integrity-check JPS `v0.1.0-draft` from its immutable release tag.
@@ -13,5 +15,3 @@ All notable changes to tagged releases are documented here.
   documentation.
 - Preserve release-pinned specification artifacts byte-for-byte across platform checkouts.
 - Document CLI version increments, prereleases, compatibility dimensions, and release policy.
-
-No version has been released or tagged yet.
