@@ -68,7 +68,13 @@ binary. A release build must report the tag version without the leading `v`.
 4. The tag workflow repeats the tests, verifies immutable JPS provenance, packages the binaries,
    creates `checksums.txt`, drafts the GitHub release, and attests every archive.
 5. Download the draft assets, verify their checksums and attestations, and smoke-test at least one
-   archive on each operating-system family.
+   archive on each operating-system family. Run the macOS archive check on a GitHub-hosted runner:
+
+   ```bash
+   gh workflow run release-smoke.yml --field tag=<cli-tag>
+   gh run watch --exit-status
+   ```
+
 6. Review the generated notes and publish the draft. With Release Immutability enabled, publishing
    locks the tag and assets.
 
